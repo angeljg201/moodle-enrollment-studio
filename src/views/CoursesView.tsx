@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, ArrowRight, BarChart3, Building2, Hash, Clock, Shield, Settings } from "lucide-react";
+import { Plus, ArrowRight, BarChart3, Building2, Hash, Clock, Shield, Settings, Download } from "lucide-react";
 import EditionPricingForm from "@/components/EditionPricingForm";
 
 const courses = [
@@ -125,7 +125,5 @@ const CoursesView = () => {
   );
 };
 
-// Need to import Download for footer
-import { Download } from "lucide-react";
 
 export default CoursesView;
