@@ -112,7 +112,7 @@ const PaymentsView = () => {
         </div>
       </div>
 
-      {showForm && <PaymentForm onClose={() => setShowForm(false)} />}
+      <PaymentForm open={showForm} onClose={() => setShowForm(false)} onSubmit={() => setShowForm(false)} />
     </div>
   );
 };

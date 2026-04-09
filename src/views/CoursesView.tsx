@@ -120,7 +120,7 @@ const CoursesView = () => {
         </div>
       </div>
 
-      {showForm && <EditionPricingForm onClose={() => setShowForm(false)} />}
+      <EditionPricingForm open={showForm} onClose={() => setShowForm(false)} onSubmit={() => setShowForm(false)} />
     </div>
   );
 };

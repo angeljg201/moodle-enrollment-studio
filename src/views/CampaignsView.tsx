@@ -128,7 +128,7 @@ const CampaignsView = () => {
         </div>
       </div>
 
-      {showForm && <CampaignForm onClose={() => setShowForm(false)} />}
+      <CampaignForm open={showForm} onClose={() => setShowForm(false)} onSubmit={() => setShowForm(false)} />
     </div>
   );
 };

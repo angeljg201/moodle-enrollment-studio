@@ -133,7 +133,7 @@ const ProspectsView = () => {
         ))}
       </div>
 
-      {showForm && <ProspectForm onClose={() => setShowForm(false)} />}
+      <ProspectForm open={showForm} onClose={() => setShowForm(false)} onSubmit={() => setShowForm(false)} />
     </div>
   );
 };
