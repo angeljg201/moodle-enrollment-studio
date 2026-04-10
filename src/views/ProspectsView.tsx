@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { Plus, MoreVertical, ChevronLeft, ChevronRight, TrendingUp } from "lucide-react";
+import { Plus, MoreVertical, ChevronLeft, ChevronRight, TrendingUp, Eye } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import ProspectForm from "@/components/ProspectForm";
 
 const prospects = [
-  { initials: "JP", name: "Juan Pérez", email: "jperez@email.com", phone: "987654321", dni: "12345678", origin: "Web", status: "ACTIVE" },
-  { initials: "MG", name: "María García", email: "mgarcia@email.com", phone: "912345678", dni: "87654321", origin: "WhatsApp", status: "ACTIVE" },
-  { initials: "CL", name: "Carlos López", email: "clopez@email.com", phone: "933445566", dni: "11223344", origin: "Facebook", status: "INACTIVE" },
-  { initials: "AM", name: "Ana Martínez", email: "amartinez@email.com", phone: "955667788", dni: "44332211", origin: "Web", status: "ACTIVE" },
+  { initials: "JP", name: "Juan Pérez", email: "jperez@email.com", phone: "987654321", dni: "12345678", origin: "Web", status: "ACTIVE", leadStage: "Prospecto" },
+  { initials: "MG", name: "María García", email: "mgarcia@email.com", phone: "912345678", dni: "87654321", origin: "WhatsApp", status: "ACTIVE", leadStage: "Interesado" },
+  { initials: "CL", name: "Carlos López", email: "clopez@email.com", phone: "933445566", dni: "11223344", origin: "Facebook", status: "INACTIVE", leadStage: "Prospecto" },
+  { initials: "AM", name: "Ana Martínez", email: "amartinez@email.com", phone: "955667788", dni: "44332211", origin: "Web", status: "ACTIVE", leadStage: "Cliente" },
+  { initials: "RD", name: "Roberto Díaz", email: "rdiaz@email.com", phone: "966778899", dni: "55443322", origin: "Instagram", status: "ACTIVE", leadStage: "Interesado" },
 ];
 
 const stats = [
@@ -16,8 +18,15 @@ const stats = [
   { label: "INSCRIPCIONES META", progress: 72 },
 ];
 
+const stageColors: Record<string, string> = {
+  Prospecto: "bg-blue-100 text-blue-700",
+  Interesado: "bg-yellow-100 text-yellow-700",
+  Cliente: "bg-emerald-100 text-emerald-700",
+};
+
 const ProspectsView = () => {
   const [showForm, setShowForm] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="space-y-6">
@@ -28,7 +37,7 @@ const ProspectsView = () => {
           <p className="text-sm text-muted-foreground mt-1">Administra y da seguimiento a los leads de inscripción.</p>
         </div>
         <button onClick={() => setShowForm(true)} className="btn-primary">
-          <Plus size={18} /> + Nuevo Prospecto
+          <Plus size={18} /> Nuevo Prospecto
         </button>
       </div>
 
@@ -36,14 +45,19 @@ const ProspectsView = () => {
       <div className="flex items-end gap-4 rounded-xl bg-card p-5 border border-border">
         <div className="flex-1">
           <label className="form-label">Campaña</label>
-          <select className="form-select">
-            <option>Todas las Campañas</option>
-          </select>
+          <select className="form-select"><option>Todas las Campañas</option></select>
         </div>
         <div className="flex-1">
           <label className="form-label">Estado</label>
+          <select className="form-select"><option>Cualquier Estado</option></select>
+        </div>
+        <div className="flex-1">
+          <label className="form-label">Etapa Lead</label>
           <select className="form-select">
-            <option>Cualquier Estado</option>
+            <option>Todas las Etapas</option>
+            <option>Prospecto</option>
+            <option>Interesado</option>
+            <option>Cliente</option>
           </select>
         </div>
         <button className="btn-secondary whitespace-nowrap">Limpiar Filtros</button>
@@ -58,6 +72,7 @@ const ProspectsView = () => {
               <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Contacto</th>
               <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">DNI</th>
               <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Origen</th>
+              <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Etapa</th>
               <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Estado</th>
               <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Acciones</th>
             </tr>
@@ -67,9 +82,7 @@ const ProspectsView = () => {
               <tr key={i} className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">
-                      {p.initials}
-                    </div>
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">{p.initials}</div>
                     <span className="font-medium text-foreground">{p.name}</span>
                   </div>
                 </td>
@@ -82,21 +95,29 @@ const ProspectsView = () => {
                   <span className="inline-flex items-center rounded-md bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">{p.origin}</span>
                 </td>
                 <td className="px-6 py-4">
-                  <span className={`inline-flex items-center rounded-md px-2.5 py-1 text-[11px] font-bold tracking-wide ${
-                    p.status === "ACTIVE" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
-                  }`}>
-                    {p.status}
+                  <span className={`inline-flex items-center rounded-md px-2.5 py-1 text-[11px] font-bold tracking-wide ${stageColors[p.leadStage] || "bg-muted text-muted-foreground"}`}>
+                    {p.leadStage}
                   </span>
                 </td>
                 <td className="px-6 py-4">
-                  <button className="text-muted-foreground hover:text-foreground"><MoreVertical size={18} /></button>
+                  <span className={`inline-flex items-center rounded-md px-2.5 py-1 text-[11px] font-bold tracking-wide ${
+                    p.status === "ACTIVE" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                  }`}>{p.status}</span>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => navigate(`/prospectos/${p.dni}`)} className="text-muted-foreground hover:text-primary" title="Ver detalle">
+                      <Eye size={16} />
+                    </button>
+                    <button className="text-muted-foreground hover:text-foreground"><MoreVertical size={16} /></button>
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
         <div className="flex items-center justify-between border-t border-border px-6 py-3">
-          <span className="text-sm text-muted-foreground">Mostrando 4 de 128 prospectos</span>
+          <span className="text-sm text-muted-foreground">Mostrando 5 de 128 prospectos</span>
           <div className="flex items-center gap-1">
             <button className="h-8 w-8 rounded-md border border-border flex items-center justify-center text-muted-foreground hover:bg-muted"><ChevronLeft size={16} /></button>
             <button className="h-8 w-8 rounded-md bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">1</button>
