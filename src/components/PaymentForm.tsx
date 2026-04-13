@@ -26,13 +26,23 @@ const emptyData: PaymentData = {
 const PaymentForm = ({ open, onClose, initialData, onSubmit }: PaymentFormProps) => {
   const isEdit = !!initialData;
   const [form, setForm] = useState<PaymentData>(initialData || emptyData);
+  const [file, setFile] = useState<File | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const set = (key: keyof PaymentData, value: string) => setForm((prev) => ({ ...prev, [key]: value }));
+
+  const handleFile = (f: File) => {
+    const valid = ["image/png", "image/jpeg", "application/pdf"];
+    if (valid.includes(f.type) && f.size <= 5 * 1024 * 1024) setFile(f);
+  };
+
+  const onDrop = (e: DragEvent) => { e.preventDefault(); setIsDragging(false); if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); };
 
   const handleSubmit = () => {
     onSubmit(form);
     onClose();
-    if (!isEdit) setForm(emptyData);
+    if (!isEdit) { setForm(emptyData); setFile(null); }
   };
 
   return (
