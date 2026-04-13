@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Plus, MoreVertical, User, Mail, Phone } from "lucide-react";
 
 interface Lead {
@@ -47,6 +48,7 @@ const initialLeads: Record<string, Lead[]> = {
 };
 
 const PipelineView = () => {
+  const navigate = useNavigate();
   const [leads] = useState(initialLeads);
   const [draggedLead, setDraggedLead] = useState<{ lead: Lead; fromCol: string } | null>(null);
 
@@ -105,7 +107,8 @@ const PipelineView = () => {
                     key={lead.id}
                     draggable
                     onDragStart={() => handleDragStart(lead, col.id)}
-                    className="rounded-lg bg-card border border-border p-4 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow"
+                    onClick={() => navigate(`/prospectos/${lead.id}`)}
+                    className="rounded-lg bg-card border border-border p-4 cursor-pointer hover:shadow-md hover:border-primary/30 transition-all"
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">

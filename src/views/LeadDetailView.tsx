@@ -38,7 +38,7 @@ const typeIcons: Record<string, { icon: typeof Phone; color: string; bg: string 
 const LeadDetailView = () => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
-  const [newInteraction, setNewInteraction] = useState({ type: "CALL", title: "", desc: "" });
+  const [newInteraction, setNewInteraction] = useState({ type: "CALL", title: "", desc: "", stageUpdate: "KEEP" });
 
   return (
     <div className="space-y-6">
@@ -186,6 +186,18 @@ const LeadDetailView = () => {
               <div>
                 <label className="form-label">Título</label>
                 <input className="form-input" placeholder="Ej: Seguimiento telefónico" value={newInteraction.title} onChange={(e) => setNewInteraction(p => ({ ...p, title: e.target.value }))} />
+              </div>
+              <div>
+                <label className="form-label">Actualizar Etapa del Lead (Opcional)</label>
+                <select className="form-select" value={newInteraction.stageUpdate} onChange={(e) => setNewInteraction(p => ({ ...p, stageUpdate: e.target.value }))}>
+                  <option value="KEEP">Mantener igual</option>
+                  <option value="NEW">Nuevo</option>
+                  <option value="CONTACTED">Contactado</option>
+                  <option value="QUALIFIED">Calificado</option>
+                  <option value="NEGOTIATION">Negociación</option>
+                  <option value="WON">Ganado</option>
+                  <option value="LOST">Perdido</option>
+                </select>
               </div>
               <div>
                 <label className="form-label">Descripción</label>

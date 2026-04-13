@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Users, ShoppingCart, Trash2, Plus, Check, LayoutGrid, SlidersHorizontal, Upload, X } from "lucide-react";
+import { Users, ShoppingCart, Trash2, Plus, Check, LayoutGrid, SlidersHorizontal } from "lucide-react";
 
 const selectedProspects = [
   { initials: "MA", name: "Miguel Angel", email: "m.angel@example.com" },
@@ -21,7 +21,7 @@ const cartItems = [
 const OrdersView = () => {
   const [discount] = useState(0);
   const [paymentType, setPaymentType] = useState<"contado" | "cuotas">("contado");
-  const [showUploadModal, setShowUploadModal] = useState(false);
+  
   const subtotal = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
   const discountAmount = subtotal * (discount / 100);
   const total = subtotal - discountAmount;
@@ -94,7 +94,7 @@ const OrdersView = () => {
 
         {/* Right: Order Summary */}
         <div className="w-[320px] shrink-0">
-          <div className="rounded-xl overflow-hidden border border-border sticky top-0">
+          <div className="rounded-xl overflow-hidden border border-border sticky top-4">
             <div className="bg-sidebar text-sidebar-accent-foreground p-5">
               <div className="flex items-center justify-between">
                 <div>
@@ -163,45 +163,11 @@ const OrdersView = () => {
               <button className="btn-primary w-full justify-center mt-2">
                 <Check size={16} /> Procesar Orden
               </button>
-              <button onClick={() => setShowUploadModal(true)} className="btn-secondary w-full justify-center mt-1">
-                <Upload size={16} /> Subir Comprobante
-              </button>
-              <p className="text-[11px] text-center text-muted-foreground">Al procesar, se generará una factura y se enviará un correo de confirmación al prospecto.</p>
+              <p className="text-[11px] text-center text-muted-foreground mt-1">Al procesar, se generará una factura y se enviará un correo de confirmación al prospecto.</p>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Upload Modal */}
-      {showUploadModal && (
-        <div className="modal-overlay" onClick={() => setShowUploadModal(false)}>
-          <div className="modal-container max-w-md" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between p-6 border-b border-border">
-              <h2 className="text-lg font-bold text-foreground">Subir Comprobante de Pago</h2>
-              <button onClick={() => setShowUploadModal(false)} className="text-muted-foreground hover:text-foreground"><X size={20} /></button>
-            </div>
-            <div className="p-6 space-y-4">
-              <div className="border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-primary/50 transition-colors cursor-pointer">
-                <Upload size={32} className="mx-auto text-muted-foreground mb-3" />
-                <p className="text-sm font-medium text-foreground">Arrastra o haz clic para subir</p>
-                <p className="text-xs text-muted-foreground mt-1">PNG, JPG o PDF • Máx. 5MB</p>
-              </div>
-              <div>
-                <label className="form-label">Referencia de Operación</label>
-                <input className="form-input" placeholder="Ej: OP-2024-00123" />
-              </div>
-              <div>
-                <label className="form-label">Notas</label>
-                <textarea className="form-input min-h-[80px]" placeholder="Información adicional..." />
-              </div>
-            </div>
-            <div className="flex justify-end gap-3 p-6 border-t border-border">
-              <button className="btn-secondary" onClick={() => setShowUploadModal(false)}>Cancelar</button>
-              <button className="btn-primary" onClick={() => setShowUploadModal(false)}>Subir Comprobante</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

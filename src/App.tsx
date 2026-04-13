@@ -8,6 +8,7 @@ import DashboardView from "@/views/DashboardView";
 import ProspectsView from "@/views/ProspectsView";
 import PipelineView from "@/views/PipelineView";
 import OrdersView from "@/views/OrdersView";
+import OrdersListView from "@/views/OrdersListView";
 import ProductsView from "@/views/ProductsView";
 import FinanceDashboardView from "@/views/FinanceDashboardView";
 import PaymentsView from "@/views/PaymentsView";
@@ -34,7 +35,9 @@ const App = () => (
             <Route path="prospectos" element={<ProspectsView />} />
             <Route path="prospectos/:id" element={<LeadDetailView />} />
             <Route path="pipeline" element={<PipelineView />} />
-            <Route path="ordenes" element={<OrdersView />} />
+            <Route path="ordenes" element={<OrdersListView />} />
+            <Route path="ordenes/:id" element={<OrdersListView />} />
+            <Route path="nueva-orden" element={<OrdersView />} />
             <Route path="productos" element={<ProductsView />} />
             <Route path="finanzas" element={<FinanceDashboardView />} />
             <Route path="pagos" element={<PaymentsView />} />
