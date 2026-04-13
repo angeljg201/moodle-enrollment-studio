@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, DragEvent } from "react";
 import { Users, ChevronDown, DollarSign, Info } from "lucide-react";
 import ModalWrapper from "./ModalWrapper";
 
