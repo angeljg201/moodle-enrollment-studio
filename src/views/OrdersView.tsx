@@ -168,7 +168,7 @@ const OrdersView = () => {
           </div>
         </div>
       </div>
-
+    </div>
   );
 };
 
