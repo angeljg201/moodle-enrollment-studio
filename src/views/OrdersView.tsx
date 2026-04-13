@@ -21,7 +21,7 @@ const cartItems = [
 const OrdersView = () => {
   const [discount] = useState(0);
   const [paymentType, setPaymentType] = useState<"contado" | "cuotas">("contado");
-  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showUploadModal] = useState(false);
   const subtotal = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
   const discountAmount = subtotal * (discount / 100);
   const total = subtotal - discountAmount;
@@ -169,37 +169,6 @@ const OrdersView = () => {
         </div>
       </div>
 
-      {/* Upload Modal */}
-      {showUploadModal && (
-        <div className="modal-overlay" onClick={() => setShowUploadModal(false)}>
-          <div className="modal-container max-w-md" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between p-6 border-b border-border">
-              <h2 className="text-lg font-bold text-foreground">Subir Comprobante de Pago</h2>
-              <button onClick={() => setShowUploadModal(false)} className="text-muted-foreground hover:text-foreground"><X size={20} /></button>
-            </div>
-            <div className="p-6 space-y-4">
-              <div className="border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-primary/50 transition-colors cursor-pointer">
-                <Upload size={32} className="mx-auto text-muted-foreground mb-3" />
-                <p className="text-sm font-medium text-foreground">Arrastra o haz clic para subir</p>
-                <p className="text-xs text-muted-foreground mt-1">PNG, JPG o PDF • Máx. 5MB</p>
-              </div>
-              <div>
-                <label className="form-label">Referencia de Operación</label>
-                <input className="form-input" placeholder="Ej: OP-2024-00123" />
-              </div>
-              <div>
-                <label className="form-label">Notas</label>
-                <textarea className="form-input min-h-[80px]" placeholder="Información adicional..." />
-              </div>
-            </div>
-            <div className="flex justify-end gap-3 p-6 border-t border-border">
-              <button className="btn-secondary" onClick={() => setShowUploadModal(false)}>Cancelar</button>
-              <button className="btn-primary" onClick={() => setShowUploadModal(false)}>Subir Comprobante</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
   );
 };
 
