@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Users, ShoppingCart, Trash2, Plus, Check, LayoutGrid, SlidersHorizontal, X } from "lucide-react";
+import { Users, ShoppingCart, Trash2, Plus, Check, LayoutGrid, SlidersHorizontal } from "lucide-react";
 
 const selectedProspects = [
   { initials: "MA", name: "Miguel Angel", email: "m.angel@example.com" },
@@ -21,7 +21,7 @@ const cartItems = [
 const OrdersView = () => {
   const [discount] = useState(0);
   const [paymentType, setPaymentType] = useState<"contado" | "cuotas">("contado");
-  const [showUploadModal] = useState(false);
+  
   const subtotal = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
   const discountAmount = subtotal * (discount / 100);
   const total = subtotal - discountAmount;
