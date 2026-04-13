@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Users, ShoppingCart, Trash2, Plus, Check, LayoutGrid, SlidersHorizontal, Upload, X } from "lucide-react";
+import { Search, Users, ShoppingCart, Trash2, Plus, Check, LayoutGrid, SlidersHorizontal, X } from "lucide-react";
 
 const selectedProspects = [
   { initials: "MA", name: "Miguel Angel", email: "m.angel@example.com" },
