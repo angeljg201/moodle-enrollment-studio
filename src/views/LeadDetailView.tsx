@@ -188,6 +188,18 @@ const LeadDetailView = () => {
                 <input className="form-input" placeholder="Ej: Seguimiento telefónico" value={newInteraction.title} onChange={(e) => setNewInteraction(p => ({ ...p, title: e.target.value }))} />
               </div>
               <div>
+                <label className="form-label">Actualizar Etapa del Lead (Opcional)</label>
+                <select className="form-select" value={newInteraction.stageUpdate} onChange={(e) => setNewInteraction(p => ({ ...p, stageUpdate: e.target.value }))}>
+                  <option value="KEEP">Mantener igual</option>
+                  <option value="NEW">Nuevo</option>
+                  <option value="CONTACTED">Contactado</option>
+                  <option value="QUALIFIED">Calificado</option>
+                  <option value="NEGOTIATION">Negociación</option>
+                  <option value="WON">Ganado</option>
+                  <option value="LOST">Perdido</option>
+                </select>
+              </div>
+              <div>
                 <label className="form-label">Descripción</label>
                 <textarea className="form-input min-h-[100px]" placeholder="Detalle de la interacción..." value={newInteraction.desc} onChange={(e) => setNewInteraction(p => ({ ...p, desc: e.target.value }))} />
               </div>

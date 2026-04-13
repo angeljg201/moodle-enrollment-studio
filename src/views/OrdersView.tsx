@@ -163,10 +163,7 @@ const OrdersView = () => {
               <button className="btn-primary w-full justify-center mt-2">
                 <Check size={16} /> Procesar Orden
               </button>
-              <button onClick={() => setShowUploadModal(true)} className="btn-secondary w-full justify-center mt-1">
-                <Upload size={16} /> Subir Comprobante
-              </button>
-              <p className="text-[11px] text-center text-muted-foreground">Al procesar, se generará una factura y se enviará un correo de confirmación al prospecto.</p>
+              <p className="text-[11px] text-center text-muted-foreground mt-1">Al procesar, se generará una factura y se enviará un correo de confirmación al prospecto.</p>
             </div>
           </div>
         </div>

@@ -48,6 +48,7 @@ const initialLeads: Record<string, Lead[]> = {
 };
 
 const PipelineView = () => {
+  const navigate = useNavigate();
   const [leads] = useState(initialLeads);
   const [draggedLead, setDraggedLead] = useState<{ lead: Lead; fromCol: string } | null>(null);
 
