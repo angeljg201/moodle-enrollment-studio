@@ -1,4 +1,5 @@
-import { Outlet, NavLink } from "react-router-dom";
+import { useState } from "react";
+import { Outlet, NavLink, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -17,17 +18,24 @@ import {
   HelpCircle,
   DollarSign,
   BarChart3,
+  ChevronDown,
+  ShieldCheck,
+  TrendingUp,
+  Wallet,
+  Speaker,
 } from "lucide-react";
 
 const sidebarSections = [
   {
-    title: "ADMINISTRACIÓN",
+    title: "Administración",
+    icon: ShieldCheck,
     items: [
       { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     ],
   },
   {
-    title: "VENTAS",
+    title: "Ventas",
+    icon: TrendingUp,
     items: [
       { to: "/prospectos", label: "Prospectos", icon: Users },
       { to: "/pipeline", label: "Pipeline", icon: Kanban },
@@ -36,7 +44,8 @@ const sidebarSections = [
     ],
   },
   {
-    title: "FINANZAS",
+    title: "Finanzas",
+    icon: Wallet,
     items: [
       { to: "/finanzas", label: "Dashboard", icon: DollarSign },
       { to: "/pagos", label: "Pagos", icon: CreditCard },
@@ -45,7 +54,8 @@ const sidebarSections = [
     ],
   },
   {
-    title: "MARKETING",
+    title: "Marketing",
+    icon: Speaker,
     items: [
       { to: "/marketing", label: "Dashboard", icon: BarChart3 },
       { to: "/campanas", label: "Campañas", icon: Megaphone },
@@ -62,6 +72,25 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   }`;
 
 const MainLayout = () => {
+  const location = useLocation();
+
+  // Auto-open sections that contain the active route
+  const getInitialOpen = () => {
+    const open: Record<string, boolean> = {};
+    sidebarSections.forEach((section) => {
+      open[section.title] = section.items.some((item) =>
+        location.pathname.startsWith(item.to)
+      );
+    });
+    return open;
+  };
+
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>(getInitialOpen);
+
+  const toggleSection = (title: string) => {
+    setOpenSections((prev) => ({ ...prev, [title]: !prev[title] }));
+  };
+
   return (
     <div className="flex h-screen w-full overflow-hidden">
       {/* Sidebar */}
@@ -78,22 +107,48 @@ const MainLayout = () => {
         </div>
 
         {/* Navigation sections */}
-        <nav className="flex-1 overflow-y-auto px-3 pb-4 space-y-5">
-          {sidebarSections.map((section) => (
-            <div key={section.title}>
-              <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-[0.15em] text-sidebar-foreground/40">
-                {section.title}
-              </p>
-              <div className="space-y-0.5">
-                {section.items.map((item) => (
-                  <NavLink key={item.to} to={item.to} className={navLinkClass}>
-                    <item.icon size={16} />
-                    {item.label}
-                  </NavLink>
-                ))}
+        <nav className="flex-1 overflow-y-auto px-3 pb-4 space-y-1">
+          {sidebarSections.map((section) => {
+            const isOpen = openSections[section.title] ?? false;
+            const SectionIcon = section.icon;
+
+            return (
+              <div key={section.title}>
+                {/* Section toggle button */}
+                <button
+                  onClick={() => toggleSection(section.title)}
+                  className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-[13px] font-semibold text-sidebar-foreground/80 hover:bg-sidebar-accent/40 transition-colors"
+                >
+                  <span className="flex items-center gap-3">
+                    <SectionIcon size={16} />
+                    {section.title}
+                  </span>
+                  <ChevronDown
+                    size={14}
+                    className={`transition-transform duration-200 text-sidebar-foreground/40 ${
+                      isOpen ? "rotate-0" : "-rotate-90"
+                    }`}
+                  />
+                </button>
+
+                {/* Collapsible children with hierarchy line */}
+                <div
+                  className={`overflow-hidden transition-all duration-200 ${
+                    isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+                  }`}
+                >
+                  <div className="ml-[22px] border-l border-sidebar-foreground/15 pl-0 space-y-0.5 py-1">
+                    {section.items.map((item) => (
+                      <NavLink key={item.to} to={item.to} className={navLinkClass}>
+                        <item.icon size={15} />
+                        {item.label}
+                      </NavLink>
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </nav>
 
         {/* Bottom */}
