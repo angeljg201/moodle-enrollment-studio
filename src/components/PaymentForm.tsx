@@ -146,10 +146,48 @@ const PaymentForm = ({ open, onClose, initialData, onSubmit }: PaymentFormProps)
         </div>
       </div>
 
+      {/* Comprobante Upload */}
+      <div className="mb-5">
+        <label className="form-label">Comprobante de Pago (Voucher)</label>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".png,.jpg,.jpeg,.pdf"
+          className="hidden"
+          onChange={(e) => { if (e.target.files?.[0]) handleFile(e.target.files[0]); }}
+        />
+        {file ? (
+          <div className="flex items-center justify-between gap-3 rounded-lg border border-border bg-muted/50 px-4 py-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <FileImage size={20} className="text-primary shrink-0" />
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-foreground truncate">{file.name}</p>
+                <p className="text-xs text-muted-foreground">{(file.size / 1024).toFixed(0)} KB</p>
+              </div>
+            </div>
+            <button onClick={() => { setFile(null); if (fileInputRef.current) fileInputRef.current.value = ""; }} className="p-1 rounded hover:bg-muted text-muted-foreground"><X size={16} /></button>
+          </div>
+        ) : (
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+            onDragLeave={() => setIsDragging(false)}
+            onDrop={onDrop}
+            className={`flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed py-8 cursor-pointer transition-colors ${
+              isDragging ? "border-primary bg-primary/5" : "border-border hover:bg-muted/50"
+            }`}
+          >
+            <Upload size={24} className="text-muted-foreground" />
+            <p className="text-sm text-foreground font-medium">Haz clic o arrastra el comprobante de pago (Voucher)</p>
+            <p className="text-xs text-muted-foreground">PNG, JPG o PDF. Máx 5MB</p>
+          </div>
+        )}
+      </div>
+
       {/* Info */}
       <div className="flex items-start gap-2.5 p-4 bg-muted rounded-lg text-sm text-muted-foreground">
         <Info size={16} className="text-primary mt-0.5 shrink-0" />
-        <p>Al registrar este pago, el estado de la matrícula se actualizará automáticamente en Moodle si el monto cubre el balance pendiente o la cuota correspondiente.</p>
+        <p>Al confirmar el pago y adjuntar el comprobante, el sistema emitirá automáticamente la factura correspondiente.</p>
       </div>
     </ModalWrapper>
   );
