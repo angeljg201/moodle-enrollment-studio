@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Plus, MoreVertical, User, Mail, Phone } from "lucide-react";
 
 interface Lead {

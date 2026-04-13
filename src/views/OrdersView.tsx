@@ -94,7 +94,7 @@ const OrdersView = () => {
 
         {/* Right: Order Summary */}
         <div className="w-[320px] shrink-0">
-          <div className="rounded-xl overflow-hidden border border-border sticky top-0">
+          <div className="rounded-xl overflow-hidden border border-border sticky top-4">
             <div className="bg-sidebar text-sidebar-accent-foreground p-5">
               <div className="flex items-center justify-between">
                 <div>

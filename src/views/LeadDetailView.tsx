@@ -38,7 +38,7 @@ const typeIcons: Record<string, { icon: typeof Phone; color: string; bg: string 
 const LeadDetailView = () => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
-  const [newInteraction, setNewInteraction] = useState({ type: "CALL", title: "", desc: "" });
+  const [newInteraction, setNewInteraction] = useState({ type: "CALL", title: "", desc: "", stageUpdate: "KEEP" });
 
   return (
     <div className="space-y-6">
