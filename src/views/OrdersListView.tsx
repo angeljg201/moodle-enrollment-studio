@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Search, Eye, FileText, Filter } from "lucide-react";
+import { Plus, Search, Eye, Filter } from "lucide-react";
+import NewOrderModal from "@/components/NewOrderModal";
 
 const orders = [
   { id: "ORD-001", prospect: "Carlos Mendoza", course: "Data Science Avanzado", total: 1250, paymentType: "Contado", status: "Completada", date: "2024-06-28" },
@@ -22,6 +23,7 @@ const statusStyles: Record<string, string> = {
 const OrdersListView = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
+  const [showNewOrder, setShowNewOrder] = useState(false);
 
   const filtered = orders.filter(o =>
     o.prospect.toLowerCase().includes(search.toLowerCase()) ||
@@ -39,7 +41,7 @@ const OrdersListView = () => {
             {orders.length} órdenes registradas • Ingresos completados: S/ {totalRevenue.toLocaleString()}
           </p>
         </div>
-        <button onClick={() => navigate("/nueva-orden")} className="btn-primary">
+        <button onClick={() => setShowNewOrder(true)} className="btn-primary">
           <Plus size={18} /> Nueva Orden de Venta
         </button>
       </div>
@@ -122,6 +124,7 @@ const OrdersListView = () => {
           </tbody>
         </table>
       </div>
+      <NewOrderModal open={showNewOrder} onClose={() => setShowNewOrder(false)} />
     </div>
   );
 };
