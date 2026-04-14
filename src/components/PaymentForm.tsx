@@ -1,5 +1,10 @@
-import { useState, useRef, DragEvent } from "react";
-import { Users, ChevronDown, DollarSign, Info, Upload, FileImage, X } from "lucide-react";
+import { useState, useRef, useMemo, DragEvent } from "react";
+import { Users, ChevronDown, DollarSign, Info, Upload, FileImage, X, CalendarIcon, Search } from "lucide-react";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { cn } from "@/lib/utils";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import ModalWrapper from "./ModalWrapper";
 
 interface PaymentData {
@@ -9,6 +14,7 @@ interface PaymentData {
   numeroCuotas: string;
   monto: string;
   idTransaccion: string;
+  dueDate?: Date;
 }
 
 interface PaymentFormProps {
@@ -17,6 +23,14 @@ interface PaymentFormProps {
   initialData?: PaymentData;
   onSubmit: (data: PaymentData) => void;
 }
+
+const orders = [
+  { id: "#ORD-2931", client: "Jorge Castillo", email: "j.castillo@email.com", total: "1,200.00", txId: "TXN-80A31" },
+  { id: "#ORD-2944", client: "Ana Mendoza", email: "a.mendoza@email.com", total: "450.00", txId: "TXN-44B92" },
+  { id: "#ORD-2950", client: "Roberto Sánchez", email: "r.sanchez@email.com", total: "2,100.00", txId: "TXN-50C13" },
+  { id: "#ORD-2962", client: "Lucía Paredes", email: "l.paredes@email.com", total: "500.00", txId: "TXN-62D74" },
+  { id: "#ORD-2978", client: "Carlos Mendoza", email: "c.mendoza@email.com", total: "1,250.00", txId: "TXN-78E55" },
+];
 
 const emptyData: PaymentData = {
   clienteOrden: "", metodoPago: "", tipoPago: "total",
@@ -28,9 +42,31 @@ const PaymentForm = ({ open, onClose, initialData, onSubmit }: PaymentFormProps)
   const [form, setForm] = useState<PaymentData>(initialData || emptyData);
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [dueDate, setDueDate] = useState<Date | undefined>();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const set = (key: keyof PaymentData, value: string) => setForm((prev) => ({ ...prev, [key]: value }));
+
+  const filteredOrders = useMemo(() => {
+    if (!searchQuery) return orders;
+    const q = searchQuery.toLowerCase();
+    return orders.filter(o => o.id.toLowerCase().includes(q) || o.client.toLowerCase().includes(q));
+  }, [searchQuery]);
+
+  const selectedOrder = useMemo(() => orders.find(o => o.id === form.clienteOrden), [form.clienteOrden]);
+
+  const selectOrder = (order: typeof orders[0]) => {
+    setForm(prev => ({
+      ...prev,
+      clienteOrden: order.id,
+      monto: order.total,
+      idTransaccion: order.txId,
+    }));
+    setSearchOpen(false);
+    setSearchQuery("");
+  };
 
   const handleFile = (f: File) => {
     const valid = ["image/png", "image/jpeg", "application/pdf"];
@@ -40,9 +76,9 @@ const PaymentForm = ({ open, onClose, initialData, onSubmit }: PaymentFormProps)
   const onDrop = (e: DragEvent) => { e.preventDefault(); setIsDragging(false); if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); };
 
   const handleSubmit = () => {
-    onSubmit(form);
+    onSubmit({ ...form, dueDate });
     onClose();
-    if (!isEdit) { setForm(emptyData); setFile(null); }
+    if (!isEdit) { setForm(emptyData); setFile(null); setDueDate(undefined); }
   };
 
   return (
@@ -59,13 +95,69 @@ const PaymentForm = ({ open, onClose, initialData, onSubmit }: PaymentFormProps)
         </>
       }
     >
-      {/* Cliente */}
+      {/* Selector de Orden / Cliente */}
       <div className="mb-5">
         <label className="form-label">Buscar Orden o Cliente</label>
         <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"><Users size={16} /></span>
-          <input className="form-input pl-10" placeholder="Ej: Mariana Velásquez o MOOD-9921" value={form.clienteOrden} onChange={(e) => set("clienteOrden", e.target.value)} />
+          <div
+            onClick={() => setSearchOpen(!searchOpen)}
+            className="form-input pl-10 cursor-pointer flex items-center min-h-[40px]"
+          >
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"><Search size={16} /></span>
+            {selectedOrder ? (
+              <div className="flex items-center gap-2">
+                <span className="text-primary font-semibold text-sm">{selectedOrder.id}</span>
+                <span className="text-foreground text-sm">— {selectedOrder.client}</span>
+              </div>
+            ) : (
+              <span className="text-muted-foreground text-sm">Ej: #ORD-2931 o Mariana Velásquez</span>
+            )}
+          </div>
+          {searchOpen && (
+            <div className="absolute z-50 top-full left-0 right-0 mt-1 rounded-lg bg-card border border-border shadow-lg overflow-hidden">
+              <div className="p-2 border-b border-border">
+                <input
+                  autoFocus
+                  className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none px-2 py-1.5"
+                  placeholder="Buscar por orden o cliente..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              <div className="max-h-48 overflow-y-auto">
+                {filteredOrders.map((o) => (
+                  <button
+                    key={o.id}
+                    onClick={() => selectOrder(o)}
+                    className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors text-left"
+                  >
+                    <div>
+                      <span className="text-primary font-semibold text-sm">{o.id}</span>
+                      <p className="text-xs text-foreground">{o.client}</p>
+                      <p className="text-[10px] text-muted-foreground">{o.email}</p>
+                    </div>
+                    <span className="text-sm font-bold text-foreground">S/ {o.total}</span>
+                  </button>
+                ))}
+                {filteredOrders.length === 0 && (
+                  <p className="px-4 py-3 text-sm text-muted-foreground text-center">Sin resultados</p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
+        {selectedOrder && (
+          <div className="mt-2 p-3 rounded-lg bg-primary/5 border border-primary/20">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Users size={14} className="text-primary" />
+                <span className="text-sm font-medium text-foreground">{selectedOrder.client}</span>
+              </div>
+              <span className="text-sm font-bold text-primary">S/ {selectedOrder.total}</span>
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-1">TX: {selectedOrder.txId} • {selectedOrder.email}</p>
+          </div>
+        )}
       </div>
 
       {/* Método de Pago */}
@@ -122,14 +214,43 @@ const PaymentForm = ({ open, onClose, initialData, onSubmit }: PaymentFormProps)
         </div>
       </div>
 
-      {/* Cuotas */}
-      <div className="mb-5">
-        <label className="form-label">Número de Cuotas</label>
-        <div className="grid grid-cols-2 gap-4">
-          <input className="form-input" placeholder="Ej: 3" value={form.numeroCuotas} onChange={(e) => set("numeroCuotas", e.target.value)} />
-          <p className="flex items-center text-xs text-muted-foreground">Se generarán comprobantes mensuales automáticos.</p>
+      {/* Cuotas + DatePicker condicional */}
+      {form.tipoPago === "cuotas" && (
+        <div className="mb-5 space-y-4">
+          <div>
+            <label className="form-label">Número de Cuotas</label>
+            <div className="grid grid-cols-2 gap-4">
+              <input className="form-input" placeholder="Ej: 3" value={form.numeroCuotas} onChange={(e) => set("numeroCuotas", e.target.value)} />
+              <p className="flex items-center text-xs text-muted-foreground">Se generarán comprobantes mensuales automáticos.</p>
+            </div>
+          </div>
+          <div>
+            <label className="form-label">Fecha Límite de Pago (due_date)</label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  className={cn(
+                    "form-input flex items-center gap-2 w-full text-left",
+                    !dueDate && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon size={16} className="text-muted-foreground shrink-0" />
+                  {dueDate ? format(dueDate, "PPP", { locale: es }) : "Seleccionar fecha límite"}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={dueDate}
+                  onSelect={setDueDate}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Monto + ID */}
       <div className="grid grid-cols-2 gap-4 mb-5">
