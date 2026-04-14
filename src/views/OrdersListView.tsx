@@ -23,6 +23,7 @@ const statusStyles: Record<string, string> = {
 const OrdersListView = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
+  const [showNewOrder, setShowNewOrder] = useState(false);
 
   const filtered = orders.filter(o =>
     o.prospect.toLowerCase().includes(search.toLowerCase()) ||
@@ -40,7 +41,7 @@ const OrdersListView = () => {
             {orders.length} órdenes registradas • Ingresos completados: S/ {totalRevenue.toLocaleString()}
           </p>
         </div>
-        <button onClick={() => navigate("/nueva-orden")} className="btn-primary">
+        <button onClick={() => setShowNewOrder(true)} className="btn-primary">
           <Plus size={18} /> Nueva Orden de Venta
         </button>
       </div>
@@ -123,6 +124,7 @@ const OrdersListView = () => {
           </tbody>
         </table>
       </div>
+      <NewOrderModal open={showNewOrder} onClose={() => setShowNewOrder(false)} />
     </div>
   );
 };
