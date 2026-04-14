@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Plus, SlidersHorizontal, Download, TrendingUp, BarChart3 } from "lucide-react";
 import CampaignForm from "@/components/CampaignForm";
+import CampaignDetailModal from "@/components/CampaignDetailModal";
 
 const campaigns = [
   { name: "Summer Enrollment 2024", id: "CAMP-9231", course: "Data Science Mastery", platform: "Facebook", platformColor: "bg-blue-500", budget: "$12,000", spent: "$8,420", status: "ACTIVE" },
@@ -12,6 +13,7 @@ const campaigns = [
 
 const CampaignsView = () => {
   const [showForm, setShowForm] = useState(false);
+  const [selectedCampaign, setSelectedCampaign] = useState<typeof campaigns[0] | null>(null);
 
   return (
     <div className="space-y-6">
@@ -82,7 +84,11 @@ const CampaignsView = () => {
           </thead>
           <tbody>
             {campaigns.map((c, i) => (
-              <tr key={i} className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors">
+              <tr
+                key={i}
+                onClick={() => setSelectedCampaign(c)}
+                className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors cursor-pointer"
+              >
                 <td className="px-6 py-4">
                   <p className="font-semibold text-foreground">{c.name}</p>
                   <p className="text-xs text-muted-foreground">ID: {c.id}</p>
@@ -129,6 +135,7 @@ const CampaignsView = () => {
       </div>
 
       <CampaignForm open={showForm} onClose={() => setShowForm(false)} onSubmit={() => setShowForm(false)} />
+      <CampaignDetailModal open={!!selectedCampaign} onClose={() => setSelectedCampaign(null)} campaign={selectedCampaign} />
     </div>
   );
 };
