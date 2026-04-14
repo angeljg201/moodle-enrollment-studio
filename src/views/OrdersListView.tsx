@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Search, Eye, FileText, Filter } from "lucide-react";
+import { Plus, Search, Eye, Filter } from "lucide-react";
+import NewOrderModal from "@/components/NewOrderModal";
 
 const orders = [
   { id: "ORD-001", prospect: "Carlos Mendoza", course: "Data Science Avanzado", total: 1250, paymentType: "Contado", status: "Completada", date: "2024-06-28" },
