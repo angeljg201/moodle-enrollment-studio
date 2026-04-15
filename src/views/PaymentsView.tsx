@@ -70,6 +70,7 @@ const PaymentsView = () => {
               <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Tipo</th>
               <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Estado</th>
               <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Acciones</th>
+            </tr>
           </thead>
           <tbody>
             {payments.map((p, i) => (
@@ -107,6 +108,7 @@ const PaymentsView = () => {
                   </button>
                 </td>
               </tr>
+            ))}
           </tbody>
         </table>
         <div className="flex items-center justify-between border-t border-border px-6 py-3">
