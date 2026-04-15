@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Plus, SlidersHorizontal, Download, ChevronLeft, ChevronRight, TrendingUp, CheckCircle2, XCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Plus, SlidersHorizontal, Download, ChevronLeft, ChevronRight, TrendingUp, CheckCircle2, XCircle, Eye } from "lucide-react";
 import PaymentForm from "@/components/PaymentForm";
 
 const payments = [
