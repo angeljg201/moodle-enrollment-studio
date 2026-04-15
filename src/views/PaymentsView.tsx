@@ -4,14 +4,15 @@ import { Plus, SlidersHorizontal, Download, ChevronLeft, ChevronRight, TrendingU
 import PaymentForm from "@/components/PaymentForm";
 
 const payments = [
-  { code: "#ORD-2931", initials: "JC", name: "Jorge Castillo", email: "j.castillo@email.com", amount: "1,200.00", method: "YAPE", type: "PAGO ÚNICO", status: "Confirmado", confirmed: true },
-  { code: "#ORD-2944", initials: "AM", name: "Ana Mendoza", email: "a.mendoza@email.com", amount: "450.00", method: "TRANSFERENCIA", type: "CUOTAS", status: "Fallido", confirmed: false },
-  { code: "#ORD-2950", initials: "RS", name: "Roberto Sánchez", email: "r.sanchez@email.com", amount: "2,100.00", method: "POS", type: "PAGO ÚNICO", status: "Confirmado", confirmed: true },
-  { code: "#ORD-2962", initials: "LP", name: "Lucía Paredes", email: "l.paredes@email.com", amount: "500.00", method: "EFECTIVO", type: "CUOTAS", status: "Confirmado", confirmed: true },
+  { id: "PAY-001", code: "#ORD-2931", initials: "JC", name: "Jorge Castillo", email: "j.castillo@email.com", amount: "1,200.00", method: "YAPE", type: "PAGO ÚNICO", status: "Confirmado", confirmed: true },
+  { id: "PAY-002", code: "#ORD-2944", initials: "AM", name: "Ana Mendoza", email: "a.mendoza@email.com", amount: "450.00", method: "TRANSFERENCIA", type: "CUOTAS", status: "Fallido", confirmed: false },
+  { id: "PAY-003", code: "#ORD-2950", initials: "RS", name: "Roberto Sánchez", email: "r.sanchez@email.com", amount: "2,100.00", method: "POS", type: "PAGO ÚNICO", status: "Confirmado", confirmed: true },
+  { id: "PAY-004", code: "#ORD-2962", initials: "LP", name: "Lucía Paredes", email: "l.paredes@email.com", amount: "500.00", method: "EFECTIVO", type: "CUOTAS", status: "Confirmado", confirmed: true },
 ];
 
 const PaymentsView = () => {
   const [showForm, setShowForm] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="space-y-6">
@@ -68,12 +69,12 @@ const PaymentsView = () => {
               <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Método</th>
               <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Tipo</th>
               <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Estado</th>
-            </tr>
+              <th className="px-6 py-4 text-left text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Acciones</th>
           </thead>
           <tbody>
             {payments.map((p, i) => (
-              <tr key={i} className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors">
-                <td className="px-6 py-4 text-primary font-semibold">{p.code}</td>
+              <tr key={i} onClick={() => navigate(`/pagos/${p.id}`)} className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors cursor-pointer">
+                <td className="px-6 py-4 text-primary font-semibold cursor-pointer" onClick={(e) => { e.stopPropagation(); navigate(`/pagos/${p.id}`); }}>{p.code}</td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">{p.initials}</div>
@@ -97,8 +98,15 @@ const PaymentsView = () => {
                     {p.confirmed ? <CheckCircle2 size={16} /> : <XCircle size={16} />} {p.status}
                   </span>
                 </td>
+                <td className="px-6 py-4">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); navigate(`/pagos/${p.id}`); }}
+                    className="flex items-center gap-1 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
+                  >
+                    <Eye size={14} /> Ver Detalle
+                  </button>
+                </td>
               </tr>
-            ))}
           </tbody>
         </table>
         <div className="flex items-center justify-between border-t border-border px-6 py-3">
