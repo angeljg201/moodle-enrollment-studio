@@ -16,8 +16,10 @@ import PaymentPlansView from "@/views/PaymentPlansView";
 import OverdueView from "@/views/OverdueView";
 import MarketingDashboardView from "@/views/MarketingDashboardView";
 import CampaignsView from "@/views/CampaignsView";
+import CampaignDetailView from "@/views/CampaignDetailView";
 import LeadSourcesView from "@/views/LeadSourcesView";
 import LeadDetailView from "@/views/LeadDetailView";
+import OrderDetailView from "@/views/OrderDetailView";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,7 +38,7 @@ const App = () => (
             <Route path="prospectos/:id" element={<LeadDetailView />} />
             <Route path="pipeline" element={<PipelineView />} />
             <Route path="ordenes" element={<OrdersListView />} />
-            <Route path="ordenes/:id" element={<OrdersListView />} />
+            
             <Route path="nueva-orden" element={<OrdersView />} />
             <Route path="productos" element={<ProductsView />} />
             <Route path="finanzas" element={<FinanceDashboardView />} />
@@ -45,6 +47,8 @@ const App = () => (
             <Route path="morosos" element={<OverdueView />} />
             <Route path="marketing" element={<MarketingDashboardView />} />
             <Route path="campanas" element={<CampaignsView />} />
+            <Route path="campanas/:id" element={<CampaignDetailView />} />
+            <Route path="ordenes/:id" element={<OrderDetailView />} />
             <Route path="origen-leads" element={<LeadSourcesView />} />
           </Route>
           <Route path="*" element={<NotFound />} />
