@@ -27,6 +27,7 @@ const Index = () => {
     celular: "+51 900 000 000",
     genero: "masculino",
     profesion: "ingeniero",
+    leadStage: "interesado",
   };
 
   const cards = [

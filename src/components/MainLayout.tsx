@@ -1,34 +1,102 @@
-import { Outlet, NavLink } from "react-router-dom";
+import { useState } from "react";
+import { Outlet, NavLink, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
+  Kanban,
   FileText,
+  Package,
   CreditCard,
+  CalendarCheck,
+  AlertTriangle,
   Megaphone,
-  GraduationCap,
+  Target,
   Settings,
   LogOut,
   Search,
   Bell,
   HelpCircle,
+  DollarSign,
+  BarChart3,
+  ChevronDown,
+  ShieldCheck,
+  TrendingUp,
+  Wallet,
+  Speaker,
 } from "lucide-react";
 
-const navItems = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/prospectos", label: "Prospectos", icon: Users },
-  { to: "/ordenes", label: "Órdenes de Venta", icon: FileText },
-  { to: "/pagos", label: "Pagos", icon: CreditCard },
-  { to: "/campanas", label: "Campañas", icon: Megaphone },
-  { to: "/cursos", label: "Cursos", icon: GraduationCap },
+const sidebarSections = [
+  {
+    title: "Administración",
+    icon: ShieldCheck,
+    items: [
+      { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    ],
+  },
+  {
+    title: "Ventas",
+    icon: TrendingUp,
+    items: [
+      { to: "/prospectos", label: "Prospectos", icon: Users },
+      { to: "/pipeline", label: "Pipeline", icon: Kanban },
+      { to: "/ordenes", label: "Órdenes", icon: FileText },
+      { to: "/productos", label: "Productos", icon: Package },
+    ],
+  },
+  {
+    title: "Finanzas",
+    icon: Wallet,
+    items: [
+      { to: "/finanzas", label: "Dashboard", icon: DollarSign },
+      { to: "/pagos", label: "Pagos", icon: CreditCard },
+      { to: "/planes-pago", label: "Planes de Pago", icon: CalendarCheck },
+      { to: "/morosos", label: "Morosos", icon: AlertTriangle },
+    ],
+  },
+  {
+    title: "Marketing",
+    icon: Speaker,
+    items: [
+      { to: "/marketing", label: "Dashboard", icon: BarChart3 },
+      { to: "/campanas", label: "Campañas", icon: Megaphone },
+      { to: "/origen-leads", label: "Origen de Leads", icon: Target },
+    ],
+  },
 ];
 
+const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+  `flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors ${
+    isActive
+      ? "bg-sidebar-accent text-sidebar-accent-foreground"
+      : "text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground"
+  }`;
+
 const MainLayout = () => {
+  const location = useLocation();
+
+  // Auto-open sections that contain the active route
+  const getInitialOpen = () => {
+    const open: Record<string, boolean> = {};
+    sidebarSections.forEach((section) => {
+      open[section.title] = section.items.some((item) =>
+        location.pathname.startsWith(item.to)
+      );
+    });
+    return open;
+  };
+
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>(getInitialOpen);
+
+  const toggleSection = (title: string) => {
+    setOpenSections((prev) => ({ ...prev, [title]: !prev[title] }));
+  };
+
   return (
     <div className="flex h-screen w-full overflow-hidden">
       {/* Sidebar */}
-      <aside className="flex w-[220px] flex-col bg-sidebar text-sidebar-foreground shrink-0">
+      <aside className="flex w-[230px] flex-col bg-sidebar text-sidebar-foreground shrink-0">
         {/* Logo */}
-        <div className="flex items-center gap-3 px-5 py-6">
+        <div className="flex items-center gap-3 px-5 py-5">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-sm">
             M
           </div>
@@ -38,46 +106,69 @@ const MainLayout = () => {
           </div>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 flex flex-col gap-0.5 px-3 mt-2">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                  isActive
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground border-l-[3px] border-primary -ml-[3px] pl-[calc(0.75rem+3px)]"
-                    : "text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground"
-                }`
-              }
-            >
-              <item.icon size={18} />
-              {item.label}
-            </NavLink>
-          ))}
+        {/* Navigation sections */}
+        <nav className="flex-1 overflow-y-auto px-3 pb-4 space-y-1">
+          {sidebarSections.map((section) => {
+            const isOpen = openSections[section.title] ?? false;
+            const SectionIcon = section.icon;
+
+            return (
+              <div key={section.title}>
+                {/* Section toggle button */}
+                <button
+                  onClick={() => toggleSection(section.title)}
+                  className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-[13px] font-semibold text-sidebar-foreground/80 hover:bg-sidebar-accent/40 transition-colors"
+                >
+                  <span className="flex items-center gap-3">
+                    <SectionIcon size={16} />
+                    {section.title}
+                  </span>
+                  <ChevronDown
+                    size={14}
+                    className={`transition-transform duration-200 text-sidebar-foreground/40 ${
+                      isOpen ? "rotate-0" : "-rotate-90"
+                    }`}
+                  />
+                </button>
+
+                {/* Collapsible children with hierarchy line */}
+                <div
+                  className={`overflow-hidden transition-all duration-200 ${
+                    isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+                  }`}
+                >
+                  <div className="ml-[22px] border-l border-sidebar-foreground/15 pl-0 space-y-0.5 py-1">
+                    {section.items.map((item) => (
+                      <NavLink key={item.to} to={item.to} className={navLinkClass}>
+                        <item.icon size={15} />
+                        {item.label}
+                      </NavLink>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </nav>
 
         {/* Bottom */}
         <div className="border-t border-sidebar-border px-3 py-3 space-y-0.5">
-          <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-sidebar-foreground hover:bg-sidebar-accent/60 transition-colors">
-            <Settings size={18} />
-            Ajustes
+          <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[13px] text-sidebar-foreground hover:bg-sidebar-accent/60 transition-colors">
+            <Settings size={16} /> Ajustes
           </button>
-          <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-sidebar-foreground hover:bg-sidebar-accent/60 transition-colors">
-            <LogOut size={18} />
-            Cerrar Sesión
+          <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[13px] text-sidebar-foreground hover:bg-sidebar-accent/60 transition-colors">
+            <LogOut size={16} /> Cerrar Sesión
           </button>
         </div>
 
         {/* User */}
         <div className="flex items-center gap-3 border-t border-sidebar-border px-4 py-4">
           <div className="h-9 w-9 rounded-full bg-sidebar-accent flex items-center justify-center text-xs font-semibold text-sidebar-accent-foreground">
-            ER
+            AD
           </div>
           <div>
-            <p className="text-sm font-medium text-sidebar-accent-foreground">Elena Rodríguez</p>
-            <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/60">SALES_REP</p>
+            <p className="text-sm font-medium text-sidebar-accent-foreground">Admin Principal</p>
+            <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/60">ADMIN</p>
           </div>
         </div>
       </aside>
@@ -90,7 +181,7 @@ const MainLayout = () => {
             <Search size={16} className="text-muted-foreground" />
             <input
               type="text"
-              placeholder="Buscar prospectos..."
+              placeholder="Buscar prospectos, órdenes, pagos..."
               className="bg-transparent text-sm outline-none w-full placeholder:text-muted-foreground"
             />
           </div>
@@ -103,7 +194,7 @@ const MainLayout = () => {
               <HelpCircle size={20} />
             </button>
             <div className="flex items-center gap-2 pl-2 border-l border-border">
-              <span className="text-xs text-muted-foreground">Rol: SALES_REP</span>
+              <span className="text-xs text-muted-foreground">Rol: ADMIN</span>
               <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
                 <Users size={14} className="text-muted-foreground" />
               </div>

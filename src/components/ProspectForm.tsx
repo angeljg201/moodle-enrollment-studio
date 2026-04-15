@@ -11,6 +11,7 @@ interface ProspectData {
   celular: string;
   genero: string;
   profesion: string;
+  leadStage: string;
 }
 
 interface ProspectFormProps {
@@ -22,7 +23,7 @@ interface ProspectFormProps {
 
 const emptyData: ProspectData = {
   nombres: "", apellidoPaterno: "", apellidoMaterno: "", dni: "",
-  email: "", celular: "", genero: "", profesion: "",
+  email: "", celular: "", genero: "", profesion: "", leadStage: "prospecto",
 };
 
 const ProspectForm = ({ open, onClose, initialData, onSubmit }: ProspectFormProps) => {
@@ -112,7 +113,7 @@ const ProspectForm = ({ open, onClose, initialData, onSubmit }: ProspectFormProp
           </div>
           Clasificación
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-3 gap-4">
           <div>
             <label className="form-label">Género</label>
             <div className="relative">
@@ -135,6 +136,17 @@ const ProspectForm = ({ open, onClose, initialData, onSubmit }: ProspectFormProp
                 <option value="medico">Médico</option>
                 <option value="contador">Contador</option>
                 <option value="otro">Otro</option>
+              </select>
+              <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+            </div>
+          </div>
+          <div>
+            <label className="form-label">Etapa del Lead</label>
+            <div className="relative">
+              <select className="form-select pr-10" value={form.leadStage} onChange={(e) => set("leadStage", e.target.value)}>
+                <option value="prospecto">Prospecto</option>
+                <option value="interesado">Interesado</option>
+                <option value="cliente">Cliente</option>
               </select>
               <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
             </div>

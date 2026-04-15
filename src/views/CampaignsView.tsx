@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Plus, SlidersHorizontal, Download, TrendingUp, BarChart3 } from "lucide-react";
 import CampaignForm from "@/components/CampaignForm";
 
@@ -12,6 +13,7 @@ const campaigns = [
 
 const CampaignsView = () => {
   const [showForm, setShowForm] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="space-y-6">
@@ -82,7 +84,11 @@ const CampaignsView = () => {
           </thead>
           <tbody>
             {campaigns.map((c, i) => (
-              <tr key={i} className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors">
+              <tr
+                key={i}
+                onClick={() => navigate(`/campanas/${c.id}`)}
+                className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors cursor-pointer"
+              >
                 <td className="px-6 py-4">
                   <p className="font-semibold text-foreground">{c.name}</p>
                   <p className="text-xs text-muted-foreground">ID: {c.id}</p>

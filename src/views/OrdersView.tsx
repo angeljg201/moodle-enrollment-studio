@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Users, ShoppingCart, Trash2, Plus, Check, LayoutGrid, SlidersHorizontal } from "lucide-react";
+import { Users, ShoppingCart, Trash2, Plus, Check, LayoutGrid, SlidersHorizontal } from "lucide-react";
 
 const selectedProspects = [
   { initials: "MA", name: "Miguel Angel", email: "m.angel@example.com" },
@@ -20,6 +20,8 @@ const cartItems = [
 
 const OrdersView = () => {
   const [discount] = useState(0);
+  const [paymentType, setPaymentType] = useState<"contado" | "cuotas">("contado");
+  
   const subtotal = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
   const discountAmount = subtotal * (discount / 100);
   const total = subtotal - discountAmount;
@@ -92,7 +94,7 @@ const OrdersView = () => {
 
         {/* Right: Order Summary */}
         <div className="w-[320px] shrink-0">
-          <div className="rounded-xl overflow-hidden border border-border sticky top-0">
+          <div className="rounded-xl overflow-hidden border border-border sticky top-4">
             <div className="bg-sidebar text-sidebar-accent-foreground p-5">
               <div className="flex items-center justify-between">
                 <div>
@@ -112,7 +114,31 @@ const OrdersView = () => {
                   <button className="text-destructive hover:text-destructive/80"><Trash2 size={16} /></button>
                 </div>
               ))}
-              <div className="pt-4">
+
+              {/* Payment Type */}
+              <div className="pt-2">
+                <label className="form-label">Tipo de Pago</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setPaymentType("contado")}
+                    className={`rounded-lg border px-3 py-2 text-xs font-semibold transition-colors ${
+                      paymentType === "contado" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    Contado
+                  </button>
+                  <button
+                    onClick={() => setPaymentType("cuotas")}
+                    className={`rounded-lg border px-3 py-2 text-xs font-semibold transition-colors ${
+                      paymentType === "cuotas" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    Cuotas
+                  </button>
+                </div>
+              </div>
+
+              <div className="pt-2">
                 <label className="text-xs text-muted-foreground">Código de Descuento</label>
                 <input className="form-input mt-1" placeholder="Ej: BUNDLE2024" />
               </div>
@@ -125,6 +151,10 @@ const OrdersView = () => {
                   <span className="text-primary">Descuento ({discount}%)</span>
                   <span className="text-primary">-${discountAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}</span>
                 </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Tipo de Pago</span>
+                  <span className="font-semibold text-foreground uppercase">{paymentType}</span>
+                </div>
                 <div className="flex justify-between items-baseline pt-2">
                   <span className="text-sm font-medium text-foreground">Total a Cobrar</span>
                   <span className="text-xl font-bold text-primary">${total.toLocaleString("en-US", { minimumFractionDigits: 2 })}</span>
@@ -133,7 +163,7 @@ const OrdersView = () => {
               <button className="btn-primary w-full justify-center mt-2">
                 <Check size={16} /> Procesar Orden
               </button>
-              <p className="text-[11px] text-center text-muted-foreground">Al procesar, se generará una factura y se enviará un correo de confirmación al prospecto.</p>
+              <p className="text-[11px] text-center text-muted-foreground mt-1">Al procesar, se generará una factura y se enviará un correo de confirmación al prospecto.</p>
             </div>
           </div>
         </div>
