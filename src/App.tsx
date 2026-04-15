@@ -12,6 +12,7 @@ import OrdersListView from "@/views/OrdersListView";
 import ProductsView from "@/views/ProductsView";
 import FinanceDashboardView from "@/views/FinanceDashboardView";
 import PaymentsView from "@/views/PaymentsView";
+import PaymentDetailView from "@/views/PaymentDetailView";
 import PaymentPlansView from "@/views/PaymentPlansView";
 import OverdueView from "@/views/OverdueView";
 import MarketingDashboardView from "@/views/MarketingDashboardView";
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="productos" element={<ProductsView />} />
             <Route path="finanzas" element={<FinanceDashboardView />} />
             <Route path="pagos" element={<PaymentsView />} />
+            <Route path="pagos/:id" element={<PaymentDetailView />} />
             <Route path="planes-pago" element={<PaymentPlansView />} />
             <Route path="morosos" element={<OverdueView />} />
             <Route path="marketing" element={<MarketingDashboardView />} />
