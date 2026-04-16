@@ -1,35 +1,123 @@
 import { useState } from "react";
-import { Plus, ArrowRight, BarChart3, Building2, Hash, Clock, Shield, Settings, Download } from "lucide-react";
+import {
+  Plus, BookOpen, Code2, BarChart3, Palette, Brain, Globe,
+  Calendar, Users, TrendingUp, Edit, Monitor, MapPin, Laptop,
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import EditionPricingForm from "@/components/EditionPricingForm";
 
-const courses = [
+type EditionStatus = "OPEN" | "DRAFT" | "COMPLETED";
+type Modality = "Online" | "Presencial" | "Híbrida";
+
+interface Edition {
+  id: string;
+  editionNumber: number;
+  code: string;
+  startDate: string;
+  endDate: string;
+  status: EditionStatus;
+  modality: Modality;
+  enrolled: number;
+  capacity: number;
+}
+
+interface Course {
+  id: string;
+  name: string;
+  code: string;
+  description: string;
+  icon: React.ElementType;
+  editions: Edition[];
+}
+
+const courses: Course[] = [
   {
-    icon: BarChart3, code: "DATSC1", name: "Data Science Fundamentals", price: 1250,
+    id: "1", name: "Python para Data Science", code: "PYTHON",
+    description: "Domina Python aplicado al análisis de datos, machine learning y visualización con las librerías más demandadas del mercado.",
+    icon: Code2,
     editions: [
-      { name: "Edición Q1 2026", mode: "Online" },
-      { name: "Edición intensiva", mode: "Híbrida" },
+      { id: "e1", editionNumber: 1, code: "PYTHON-2026-1", startDate: "2026-02-10", endDate: "2026-04-15", status: "OPEN", modality: "Online", enrolled: 38, capacity: 45 },
+      { id: "e2", editionNumber: 2, code: "PYTHON-2026-2", startDate: "2026-05-05", endDate: "2026-07-10", status: "DRAFT", modality: "Híbrida", enrolled: 0, capacity: 30 },
     ],
   },
   {
-    icon: Building2, code: "EXCEL2", name: "Advanced Excel for Finance", price: 450,
+    id: "2", name: "Marketing Digital Estratégico", code: "MKTDIG",
+    description: "Estrategias avanzadas de performance marketing, SEO, paid media y analítica digital para escalar negocios.",
+    icon: BarChart3,
     editions: [
-      { name: "Edición Feb-Mar 2026", mode: "Online" },
+      { id: "e3", editionNumber: 1, code: "MKTDIG-2026-1", startDate: "2026-03-01", endDate: "2026-05-30", status: "OPEN", modality: "Online", enrolled: 52, capacity: 60 },
+      { id: "e4", editionNumber: 3, code: "MKTDIG-2025-3", startDate: "2025-09-01", endDate: "2025-12-15", status: "COMPLETED", modality: "Presencial", enrolled: 28, capacity: 30 },
     ],
   },
   {
-    icon: Hash, code: "PMGT5", name: "Strategic Project Management", price: 2100,
+    id: "3", name: "UX/UI Design Bootcamp", code: "UXUI",
+    description: "Programa intensivo de diseño de interfaces y experiencia de usuario con Figma, research y design systems.",
+    icon: Palette,
     editions: [
-      { name: "Global Edition 2026", mode: "Presencial" },
-      { name: "Corporate Track", mode: "Híbrida" },
+      { id: "e5", editionNumber: 1, code: "UXUI-2026-1", startDate: "2026-04-20", endDate: "2026-07-20", status: "OPEN", modality: "Híbrida", enrolled: 22, capacity: 35 },
+    ],
+  },
+  {
+    id: "4", name: "Liderazgo y Gestión de Equipos", code: "LEADER",
+    description: "Desarrolla habilidades de liderazgo, comunicación efectiva y gestión del cambio en entornos corporativos.",
+    icon: Brain,
+    editions: [
+      { id: "e6", editionNumber: 2, code: "LEADER-2026-2", startDate: "2026-06-01", endDate: "2026-08-15", status: "DRAFT", modality: "Presencial", enrolled: 0, capacity: 25 },
+      { id: "e7", editionNumber: 1, code: "LEADER-2026-1", startDate: "2026-01-15", endDate: "2026-03-30", status: "OPEN", modality: "Online", enrolled: 41, capacity: 50 },
+    ],
+  },
+  {
+    id: "5", name: "Ciberseguridad Aplicada", code: "CYBER",
+    description: "Fundamentos y prácticas avanzadas de seguridad informática, ethical hacking y respuesta ante incidentes.",
+    icon: Globe,
+    editions: [
+      { id: "e8", editionNumber: 1, code: "CYBER-2026-1", startDate: "2026-03-15", endDate: "2026-06-15", status: "OPEN", modality: "Online", enrolled: 19, capacity: 40 },
+    ],
+  },
+  {
+    id: "6", name: "Full-Stack JavaScript", code: "FULLJS",
+    description: "De cero a producción: React, Node.js, bases de datos y despliegue en la nube con proyectos reales.",
+    icon: BookOpen,
+    editions: [
+      { id: "e9", editionNumber: 1, code: "FULLJS-2026-1", startDate: "2026-05-12", endDate: "2026-08-12", status: "DRAFT", modality: "Online", enrolled: 0, capacity: 50 },
+      { id: "e10", editionNumber: 2, code: "FULLJS-2026-2", startDate: "2026-09-01", endDate: "2026-12-01", status: "DRAFT", modality: "Híbrida", enrolled: 0, capacity: 35 },
     ],
   },
 ];
 
-const modeColors: Record<string, string> = {
-  Online: "bg-primary/10 text-primary",
-  Presencial: "bg-emerald-100 text-emerald-700",
-  "Híbrida": "bg-purple-100 text-purple-700",
+const statusConfig: Record<EditionStatus, { label: string; class: string }> = {
+  OPEN: { label: "Abierta", class: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20" },
+  DRAFT: { label: "Borrador", class: "bg-amber-500/15 text-amber-400 border-amber-500/20" },
+  COMPLETED: { label: "Finalizada", class: "bg-muted text-muted-foreground border-border" },
 };
+
+const modalityIcon: Record<Modality, React.ElementType> = {
+  Online: Monitor,
+  Presencial: MapPin,
+  "Híbrida": Laptop,
+};
+
+const totalCourses = courses.length;
+const openEditions = courses.flatMap((c) => c.editions).filter((e) => e.status === "OPEN").length;
+const upcomingStarts = courses.flatMap((c) => c.editions).filter((e) => new Date(e.startDate) > new Date()).length;
+const modalityCounts = courses.flatMap((c) => c.editions).reduce<Record<string, number>>((acc, e) => {
+  acc[e.modality] = (acc[e.modality] || 0) + 1;
+  return acc;
+}, {});
+const topModality = Object.entries(modalityCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "—";
+
+const kpis = [
+  { label: "Total de Cursos", value: totalCourses, icon: BookOpen, accent: "text-primary" },
+  { label: "Ediciones Activas", value: openEditions, icon: TrendingUp, accent: "text-emerald-400" },
+  { label: "Próximos Inicios", value: upcomingStarts, icon: Calendar, accent: "text-amber-400" },
+  { label: "Modalidad Popular", value: topModality, icon: Users, accent: "text-purple-400" },
+];
+
+const formatDate = (d: string) =>
+  new Date(d).toLocaleDateString("es-PE", { day: "2-digit", month: "short", year: "numeric" });
 
 const CoursesView = () => {
   const [showForm, setShowForm] = useState(false);
@@ -40,90 +128,118 @@ const CoursesView = () => {
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Gestión Académica</h1>
-          <p className="text-sm text-muted-foreground mt-1">Administra el catálogo de formación y el control de ediciones activas.</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            Administra el catálogo de cursos master y controla las ediciones activas del ecosistema formativo.
+          </p>
         </div>
-        <button onClick={() => setShowForm(true)} className="btn-primary">
-          <Plus size={18} /> Nuevo Curso
-        </button>
+        <Button onClick={() => setShowForm(true)} className="gap-2">
+          <Plus size={18} /> Nuevo Curso Master
+        </Button>
       </div>
 
-      {/* Course Cards */}
-      <div className="grid grid-cols-3 gap-5">
-        {courses.map((c, i) => (
-          <div key={i} className="rounded-xl bg-card border border-border p-6 flex flex-col">
-            <div className="flex items-start justify-between mb-4">
-              <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                <c.icon size={24} />
+      {/* KPIs */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {kpis.map((k) => (
+          <Card key={k.label} className="border-border">
+            <CardContent className="p-5 flex items-center gap-4">
+              <div className={`h-11 w-11 rounded-xl bg-muted flex items-center justify-center ${k.accent}`}>
+                <k.icon size={20} />
               </div>
-              <span className="rounded-md bg-muted px-2.5 py-1 text-[11px] font-bold tracking-wider text-muted-foreground uppercase">{c.code}</span>
-            </div>
-            <h3 className="font-bold text-foreground text-lg mb-4">{c.name}</h3>
-
-            <div className="rounded-lg bg-muted/50 border border-border p-3 mb-4 flex-1">
-              <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-                <BarChart3 size={12} /> Ediciones Activas
-              </div>
-              {c.editions.map((e, j) => (
-                <div key={j} className="flex items-center justify-between py-1.5">
-                  <span className="text-sm text-foreground">{e.name}</span>
-                  <span className={`rounded-md px-2 py-0.5 text-[11px] font-semibold ${modeColors[e.mode] || "bg-muted text-muted-foreground"}`}>{e.mode}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex items-center justify-between pt-2 border-t border-border">
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Precio Base</p>
-                <p className="text-xl font-bold text-foreground">${c.price.toLocaleString("en-US", { minimumFractionDigits: 2 })}</p>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{k.label}</p>
+                <p className="text-2xl font-bold text-foreground mt-0.5">{k.value}</p>
               </div>
-              <button className="h-10 w-10 rounded-full border border-border flex items-center justify-center text-foreground hover:bg-muted transition-colors">
-                <ArrowRight size={18} />
-              </button>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
-      {/* Featured course */}
-      <div className="rounded-xl bg-card border border-border overflow-hidden flex">
-        <div className="w-[380px] bg-gradient-to-br from-sidebar to-sidebar-accent flex items-end p-6 relative shrink-0">
-          <span className="absolute top-4 left-4 rounded-md bg-primary px-3 py-1 text-xs font-bold text-primary-foreground uppercase">Destacado</span>
-        </div>
-        <div className="flex-1 p-8">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs font-bold uppercase tracking-wider text-primary">Catálogo 2026</p>
-            <span className="rounded-md bg-muted px-2.5 py-1 text-[11px] font-bold tracking-wider text-muted-foreground">CYBER8</span>
-          </div>
-          <h3 className="text-2xl font-bold text-foreground">Cybersecurity Architecture & Defense</h3>
-          <p className="text-sm text-muted-foreground mt-2 leading-relaxed">Programa avanzado enfocado en la infraestructura crítica y respuesta ante incidentes en entornos corporativos de alta demanda.</p>
-          <div className="flex gap-3 mt-4">
-            <span className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-xs text-foreground"><Clock size={14} /> 120 Horas Lectivas</span>
-            <span className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-xs text-foreground"><Shield size={14} /> Certificación Internacional</span>
-          </div>
-          <div className="flex items-end justify-between mt-6">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Matrícula General</p>
-              <p className="text-3xl font-bold text-primary">$3,450.00</p>
-            </div>
-            <button className="btn-secondary"><Settings size={16} /> Gestionar Programa</button>
-          </div>
-        </div>
-      </div>
+      {/* Course Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        {courses.map((course) => {
+          const Icon = course.icon;
+          return (
+            <Card key={course.id} className="border-border flex flex-col">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                      <Icon size={22} />
+                    </div>
+                    <div>
+                      <CardTitle className="text-base leading-tight">{course.name}</CardTitle>
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="font-mono text-[11px] tracking-wider shrink-0">
+                    {course.code}
+                  </Badge>
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed mt-2">{course.description}</p>
+              </CardHeader>
 
-      {/* Footer */}
-      <div className="text-center py-4">
-        <p className="text-sm text-muted-foreground">Visualizando 4 programas académicos activos.</p>
-        <div className="flex items-center justify-center gap-3 mt-2">
-          <button className="text-sm text-primary font-semibold flex items-center gap-1"><Download size={14} /> Exportar Reporte</button>
-          <span className="text-muted-foreground">•</span>
-          <button className="text-sm text-primary font-semibold flex items-center gap-1"><Settings size={14} /> Configuración de Precios</button>
-        </div>
+              <CardContent className="flex-1 flex flex-col gap-4 pt-0">
+                {/* Editions List */}
+                <div className="rounded-lg bg-muted/50 border border-border p-3 space-y-0">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+                    <Calendar size={12} /> Ediciones ({course.editions.length})
+                  </p>
+                  {course.editions.map((ed, idx) => {
+                    const st = statusConfig[ed.status];
+                    const ModalIcon = modalityIcon[ed.modality];
+                    return (
+                      <div key={ed.id}>
+                        {idx > 0 && <Separator className="my-2" />}
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-foreground truncate">{ed.code}</p>
+                            <p className="text-xs text-muted-foreground">{formatDate(ed.startDate)}</p>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                              <ModalIcon size={12} /> {ed.modality}
+                            </span>
+                            <Badge variant="outline" className={`text-[10px] font-bold border ${st.class}`}>
+                              {st.label}
+                            </Badge>
+                          </div>
+                        </div>
+                        {ed.status === "OPEN" && (
+                          <div className="mt-1.5">
+                            <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1">
+                              <span>Inscritos</span>
+                              <span>{ed.enrolled}/{ed.capacity}</span>
+                            </div>
+                            <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                              <div
+                                className="h-full rounded-full bg-primary transition-all"
+                                style={{ width: `${(ed.enrolled / ed.capacity) * 100}%` }}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Footer */}
+                <div className="flex items-center gap-2 mt-auto pt-2">
+                  <Button variant="outline" className="flex-1 gap-2 text-sm">
+                    <Plus size={16} /> Abrir Nueva Edición
+                  </Button>
+                  <Button variant="outline" size="icon" className="shrink-0">
+                    <Edit size={16} />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
       <EditionPricingForm open={showForm} onClose={() => setShowForm(false)} onSubmit={() => setShowForm(false)} />
     </div>
   );
 };
-
 
 export default CoursesView;
