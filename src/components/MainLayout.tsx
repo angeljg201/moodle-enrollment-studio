@@ -23,6 +23,8 @@ import {
   TrendingUp,
   Wallet,
   Speaker,
+  Shield,
+  BookOpen,
 } from "lucide-react";
 
 const sidebarSections = [
@@ -31,6 +33,9 @@ const sidebarSections = [
     icon: ShieldCheck,
     items: [
       { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+      { to: "/admin/usuarios", label: "Usuarios", icon: Users },
+      { to: "/admin/roles", label: "Roles", icon: Shield },
+      { to: "/admin/cursos", label: "Cursos & Ediciones", icon: BookOpen },
     ],
   },
   {
@@ -63,28 +68,6 @@ const sidebarSections = [
     ],
   },
 ];
-
-const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-  `flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors ${
-    isActive
-      ? "bg-sidebar-accent text-sidebar-accent-foreground"
-      : "text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground"
-  }`;
-
-const MainLayout = () => {
-  const location = useLocation();
-
-  // Auto-open sections that contain the active route
-  const getInitialOpen = () => {
-    const open: Record<string, boolean> = {};
-    sidebarSections.forEach((section) => {
-      open[section.title] = section.items.some((item) =>
-        location.pathname.startsWith(item.to)
-      );
-    });
-    return open;
-  };
-
   const [openSections, setOpenSections] = useState<Record<string, boolean>>(getInitialOpen);
 
   const toggleSection = (title: string) => {

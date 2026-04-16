@@ -21,6 +21,8 @@ import CampaignDetailView from "@/views/CampaignDetailView";
 import LeadSourcesView from "@/views/LeadSourcesView";
 import LeadDetailView from "@/views/LeadDetailView";
 import OrderDetailView from "@/views/OrderDetailView";
+import UsersView from "@/auth/views/UsersView";
+import CoursesAdminView from "@/orders/views/CoursesAdminView";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,7 +41,7 @@ const App = () => (
             <Route path="prospectos/:id" element={<LeadDetailView />} />
             <Route path="pipeline" element={<PipelineView />} />
             <Route path="ordenes" element={<OrdersListView />} />
-            
+            <Route path="ordenes/:id" element={<OrderDetailView />} />
             <Route path="nueva-orden" element={<OrdersView />} />
             <Route path="productos" element={<ProductsView />} />
             <Route path="finanzas" element={<FinanceDashboardView />} />
@@ -50,8 +52,11 @@ const App = () => (
             <Route path="marketing" element={<MarketingDashboardView />} />
             <Route path="campanas" element={<CampaignsView />} />
             <Route path="campanas/:id" element={<CampaignDetailView />} />
-            <Route path="ordenes/:id" element={<OrderDetailView />} />
             <Route path="origen-leads" element={<LeadSourcesView />} />
+            {/* Admin routes */}
+            <Route path="admin/usuarios" element={<UsersView />} />
+            <Route path="admin/roles" element={<div className="text-foreground"><h1 className="text-2xl font-bold">Gestión de Roles</h1><p className="text-muted-foreground mt-1">Próximamente...</p></div>} />
+            <Route path="admin/cursos" element={<CoursesAdminView />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
